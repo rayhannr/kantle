@@ -1,9 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap");
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Inter", sans-serif;
+}
+
+html.dark {
+  background-color: #0f172a;
 }
 
 a {
@@ -13,4 +18,63 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.flip {
+  transform: rotateX(90deg);
+}
+
+.shake {
+  animation: shake 250ms ease-in-out;
+}
+
+@keyframes shake {
+  10% {
+    transform: translateX(-5%);
+  }
+
+  30% {
+    transform: translateX(5%);
+  }
+
+  50% {
+    transform: translateX(-7.5%);
+  }
+
+  70% {
+    transform: translateX(7.5%);
+  }
+
+  90% {
+    transform: translateX(5%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.dance {
+  animation: dance 500ms ease-in-out;
+}
+
+@keyframes dance {
+  20% {
+    transform: translateY(-50%);
+  }
+  40% {
+    transform: translateY(5%);
+  }
+  60% {
+    transform: translateY(-25%);
+  }
+  80% {
+    transform: translateY(2.5%);
+  }
+  90% {
+    transform: translateY(-5%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
 }
