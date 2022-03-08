@@ -28,6 +28,7 @@ import {
   unicodeLength,
   encryptWithAES,
   decryptWithAES,
+  getWordOfDay,
 } from "../lib/words";
 import { addStatsForCompletedGame, loadStats } from "../lib/stats";
 import {
@@ -43,6 +44,7 @@ import { useAlert } from "../context/AlertContext";
 import { Navbar } from "../components/navbar/Navbar";
 import { getFromStorage, isInClient } from "../lib/dom";
 import Head from "next/head";
+import KBBI from "kbbi.js";
 
 function App() {
   const prefersDarkMode = isInClient() && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -81,34 +83,11 @@ function App() {
   });
 
   const [stats, setStats] = useState(() => loadStats());
+  const [solutionMeaning, setSolutionMeaning] = useState<string>("");
 
   const [isHardMode, setIsHardMode] = useState(
     getFromStorage("gameMode") ? getFromStorage("gameMode") === "hard" : false
   );
-
-  useEffect(() => {
-    // if no game state on load,
-    // show the user the how-to info modal
-    if (!loadGameStateFromLocalStorage()) {
-      setTimeout(() => {
-        setIsInfoModalOpen(true);
-      }, WELCOME_INFO_MODAL_MS);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    if (isHighContrastMode) {
-      document.documentElement.classList.add("high-contrast");
-    } else {
-      document.documentElement.classList.remove("high-contrast");
-    }
-  }, [isDarkMode, isHighContrastMode]);
 
   const handleDarkMode = (isDark: boolean) => {
     setIsDarkMode(isDark);
@@ -132,38 +111,6 @@ function App() {
   const clearCurrentRowClass = () => {
     setCurrentRowClass("");
   };
-
-  useEffect(() => {
-    saveGameStateToLocalStorage({ guesses, solution: encryptWithAES(solution) });
-  }, [guesses]);
-
-  useEffect(() => {
-    if (isGameWon) {
-      const winMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)];
-      const delayMs = isRevealing ? REVEAL_TIME_MS * MAX_WORD_LENGTH : 0;
-
-      setTimeout(() => {
-        setIsDancing(true);
-        setTimeout(() => {
-          setIsDancing(false);
-        }, DANCE_TIME_MS * MAX_WORD_LENGTH);
-      }, delayMs);
-
-      showSuccessAlert(winMessage, {
-        delayMs,
-        onClose: () => {
-          setIsStatsModalOpen(true);
-          clearCurrentRowClass();
-        },
-      });
-    }
-
-    if (isGameLost) {
-      setTimeout(() => {
-        setIsStatsModalOpen(true);
-      }, GAME_LOST_INFO_DELAY);
-    }
-  }, [isGameWon, isGameLost, isRevealing, showSuccessAlert]);
 
   const onChar = (value: string) => {
     if (unicodeLength(`${currentGuess}${value}`) <= MAX_WORD_LENGTH && guesses.length < MAX_CHALLENGES && !isGameWon) {
@@ -234,6 +181,76 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    // if no game state on load,
+    // show the user the how-to info modal
+    if (!loadGameStateFromLocalStorage()) {
+      setTimeout(() => {
+        setIsInfoModalOpen(true);
+      }, WELCOME_INFO_MODAL_MS);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isGameWon && !isGameLost) return;
+
+    const { solution } = getWordOfDay();
+
+    fetch(`/api/${solution}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.error) throw result.error;
+        setSolutionMeaning(result.arti[0]);
+      })
+      .catch((error) => console.error(error));
+  }, [isGameLost, isGameWon]);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    if (isHighContrastMode) {
+      document.documentElement.classList.add("high-contrast");
+    } else {
+      document.documentElement.classList.remove("high-contrast");
+    }
+  }, [isDarkMode, isHighContrastMode]);
+
+  useEffect(() => {
+    saveGameStateToLocalStorage({ guesses, solution: encryptWithAES(solution) });
+  }, [guesses]);
+
+  useEffect(() => {
+    if (isGameWon) {
+      const winMessage = WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)];
+      const delayMs = isRevealing ? REVEAL_TIME_MS * MAX_WORD_LENGTH : 0;
+
+      setTimeout(() => {
+        setIsDancing(true);
+        setTimeout(() => {
+          setIsDancing(false);
+        }, DANCE_TIME_MS * MAX_WORD_LENGTH);
+      }, delayMs);
+
+      showSuccessAlert(winMessage, {
+        delayMs,
+        onClose: () => {
+          setIsStatsModalOpen(true);
+          clearCurrentRowClass();
+        },
+      });
+    }
+
+    if (isGameLost) {
+      setTimeout(() => {
+        setIsStatsModalOpen(true);
+      }, GAME_LOST_INFO_DELAY);
+    }
+  }, [isGameWon, isGameLost, isRevealing, showSuccessAlert]);
+
   return (
     <div className="h-screen flex flex-col">
       <Head>
@@ -267,6 +284,7 @@ function App() {
           isHardMode={isHardMode}
           isDarkMode={isDarkMode}
           isHighContrastMode={isHighContrastMode}
+          solutionMeaning={solutionMeaning}
         />
         <SettingsModal
           isOpen={isSettingsModalOpen}

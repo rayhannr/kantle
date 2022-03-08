@@ -85,6 +85,8 @@ export const decryptWithAES = (ciphertext: string) => {
   return originalText;
 };
 
+export const capitalize = (name: string) => name.slice(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+
 export const getWordOfDay = () => {
   const epochMs = new Date(2022, 2, 8).valueOf();
   const now = Date.now();

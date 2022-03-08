@@ -3,7 +3,7 @@ import { StatBar } from "../stats/StatBar";
 import { Histogram } from "../stats/Histogram";
 import { GameStats } from "../../lib/localStorage";
 import { getTextToShare, shareStatus } from "../../lib/share";
-import { tomorrow } from "../../lib/words";
+import { capitalize, getWordOfDay, tomorrow } from "../../lib/words";
 import { BaseModal } from "./BaseModal";
 import {
   STATISTICS_TITLE,
@@ -25,6 +25,7 @@ type Props = {
   isHardMode: boolean;
   isDarkMode: boolean;
   isHighContrastMode: boolean;
+  solutionMeaning: string;
 };
 
 const TwitterIcon = () => (
@@ -55,7 +56,9 @@ export const StatsModal = ({
   isHardMode,
   isDarkMode,
   isHighContrastMode,
+  solutionMeaning,
 }: Props) => {
+  const solution = getWordOfDay().solution.toLowerCase();
   if (gameStats.totalGames <= 0) {
     return (
       <BaseModal title={STATISTICS_TITLE} isOpen={isOpen} handleClose={handleClose}>
@@ -71,44 +74,52 @@ export const StatsModal = ({
       </h4>
       <Histogram gameStats={gameStats} />
       {(isGameLost || isGameWon) && (
-        <div className="mt-5 sm:mt-6 flex dark:text-white">
-          <div className="w-1/2 mx-auto">
-            <h5>{NEW_WORD_TEXT}</h5>
-            <Countdown
-              className="text-lg font-medium text-slate-900 dark:text-gray-100"
-              date={tomorrow}
-              daysInHours={true}
-            />
+        <>
+          {!!solutionMeaning && (
+            <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
+              <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
+              <p className="text-xs">{capitalize(solutionMeaning)}</p>
+            </div>
+          )}
+          <div className="mt-5 sm:mt-6 flex dark:text-white">
+            <div className="w-1/2 mx-auto">
+              <h5>{NEW_WORD_TEXT}</h5>
+              <Countdown
+                className="text-lg font-medium text-slate-900 dark:text-gray-100"
+                date={tomorrow}
+                daysInHours={true}
+              />
+            </div>
+            <div className="w-1/2 flex flex-col items-center">
+              <button
+                type="button"
+                className="my-2 w-full max-w-[120px] flex justify-center items-center rounded-md border border-transparent shadow-sm p-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none"
+                onClick={() => {
+                  shareStatus(guesses, isGameLost, isHardMode, isDarkMode, isHighContrastMode, handleShareToClipboard);
+                }}
+              >
+                {SHARE_TEXT}
+                <ShareIcon className="h-5 w-5 ml-3" />
+              </button>
+              <a
+                className="p-2 w-full max-w-[120px] bg-sky-400 hover:bg-sky-500 text-white flex justify-center items-center text-base font-medium shadow-sm rounded-md"
+                href={`https://twitter.com/intent/tweet?text=${getTextToShare(
+                  guesses,
+                  isGameLost,
+                  isHardMode,
+                  isDarkMode,
+                  isHighContrastMode,
+                  true
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {TWEET_TEXT}
+                <TwitterIcon />
+              </a>
+            </div>
           </div>
-          <div className="w-1/2 flex flex-col items-center">
-            <button
-              type="button"
-              className="my-2 w-full max-w-[120px] flex justify-center items-center rounded-md border border-transparent shadow-sm p-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none"
-              onClick={() => {
-                shareStatus(guesses, isGameLost, isHardMode, isDarkMode, isHighContrastMode, handleShareToClipboard);
-              }}
-            >
-              {SHARE_TEXT}
-              <ShareIcon className="h-5 w-5 ml-3" />
-            </button>
-            <a
-              className="p-2 w-full max-w-[120px] bg-sky-400 hover:bg-sky-500 text-white flex justify-center items-center text-base font-medium shadow-sm rounded-md"
-              href={`https://twitter.com/intent/tweet?text=${getTextToShare(
-                guesses,
-                isGameLost,
-                isHardMode,
-                isDarkMode,
-                isHighContrastMode,
-                true
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {TWEET_TEXT}
-              <TwitterIcon />
-            </a>
-          </div>
-        </div>
+        </>
       )}
     </BaseModal>
   );
