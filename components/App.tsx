@@ -23,12 +23,10 @@ import {
 import {
   isWordInWordList,
   isWinningWord,
-  solution,
   findFirstUnusedReveal,
   unicodeLength,
   encryptWithAES,
   decryptWithAES,
-  getWordOfDay,
 } from "../lib/words";
 import { addStatsForCompletedGame, loadStats } from "../lib/stats";
 import {
@@ -45,9 +43,11 @@ import { Navbar } from "../components/navbar/Navbar";
 import { getFromStorage, isInClient } from "../lib/dom";
 import Head from "next/head";
 import KBBI from "kbbi.js";
+import { useSolution } from "../context/SolutionContext";
 
 function App() {
   const prefersDarkMode = isInClient() && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const { solution } = useSolution();
 
   const { showError: showErrorAlert, showSuccess: showSuccessAlert } = useAlert();
   const [currentGuess, setCurrentGuess] = useState("");
@@ -143,7 +143,7 @@ function App() {
 
     // enforce hard mode - all guesses must contain all previously revealed letters
     if (isHardMode) {
-      const firstMissingReveal = findFirstUnusedReveal(currentGuess, guesses);
+      const firstMissingReveal = findFirstUnusedReveal(currentGuess, guesses, solution);
       if (firstMissingReveal) {
         setCurrentRowClass("jiggle");
         return showErrorAlert(firstMissingReveal, {
@@ -159,7 +159,7 @@ function App() {
       setIsRevealing(false);
     }, REVEAL_TIME_MS * MAX_WORD_LENGTH);
 
-    const winningWord = isWinningWord(currentGuess);
+    const winningWord = isWinningWord(currentGuess, solution);
 
     if (unicodeLength(currentGuess) === MAX_WORD_LENGTH && guesses.length < MAX_CHALLENGES && !isGameWon) {
       setGuesses([...guesses, currentGuess]);
@@ -193,9 +193,6 @@ function App() {
 
   useEffect(() => {
     if (!isGameWon && !isGameLost) return;
-
-    const { solution } = getWordOfDay();
-
     fetch(`/api/${solution}`)
       .then((res) => res.json())
       .then((result) => {

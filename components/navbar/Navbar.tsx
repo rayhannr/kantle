@@ -1,6 +1,6 @@
 import { ChartBarIcon, CogIcon, InformationCircleIcon } from "@heroicons/react/outline";
 import { GAME_NAME } from "../../constants/strings";
-import { solutionIndex } from "../../lib/words";
+import { useSolution } from "../../context/SolutionContext";
 
 type Props = {
   setIsInfoModalOpen: (value: boolean) => void;
@@ -9,6 +9,7 @@ type Props = {
 };
 
 export const Navbar = ({ setIsInfoModalOpen, setIsStatsModalOpen, setIsSettingsModalOpen }: Props) => {
+  const { solutionIndex } = useSolution();
   return (
     <div className="navbar">
       <div className="navbar-content px-5 mx-auto max-w-md">

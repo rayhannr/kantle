@@ -3,7 +3,7 @@ import { StatBar } from "../stats/StatBar";
 import { Histogram } from "../stats/Histogram";
 import { GameStats } from "../../lib/localStorage";
 import { getTextToShare, shareStatus } from "../../lib/share";
-import { capitalize, getWordOfDay, tomorrow } from "../../lib/words";
+import { capitalize } from "../../lib/words";
 import { BaseModal } from "./BaseModal";
 import {
   STATISTICS_TITLE,
@@ -13,6 +13,7 @@ import {
   TWEET_TEXT,
 } from "../../constants/strings";
 import { ShareIcon } from "@heroicons/react/outline";
+import { useSolution } from "../../context/SolutionContext";
 
 type Props = {
   isOpen: boolean;
@@ -58,7 +59,8 @@ export const StatsModal = ({
   isHighContrastMode,
   solutionMeaning,
 }: Props) => {
-  const solution = getWordOfDay().solution.toLowerCase();
+  const { solution, solutionIndex, tomorrow } = useSolution();
+
   if (gameStats.totalGames <= 0) {
     return (
       <BaseModal title={STATISTICS_TITLE} isOpen={isOpen} handleClose={handleClose}>
@@ -95,7 +97,16 @@ export const StatsModal = ({
                 type="button"
                 className="my-2 w-full max-w-[120px] flex justify-center items-center rounded-md border border-transparent shadow-sm p-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none"
                 onClick={() => {
-                  shareStatus(guesses, isGameLost, isHardMode, isDarkMode, isHighContrastMode, handleShareToClipboard);
+                  shareStatus(
+                    guesses,
+                    solution,
+                    solutionIndex,
+                    isGameLost,
+                    isHardMode,
+                    isDarkMode,
+                    isHighContrastMode,
+                    handleShareToClipboard
+                  );
                 }}
               >
                 {SHARE_TEXT}
@@ -105,6 +116,8 @@ export const StatsModal = ({
                 className="p-2 w-full max-w-[120px] bg-sky-400 hover:bg-sky-500 text-white flex justify-center items-center text-base font-medium shadow-sm rounded-md"
                 href={`https://twitter.com/intent/tweet?text=${getTextToShare(
                   guesses,
+                  solution,
+                  solutionIndex,
                   isGameLost,
                   isHardMode,
                   isDarkMode,

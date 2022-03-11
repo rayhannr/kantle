@@ -1,5 +1,4 @@
 import { getGuessStatuses } from "./statuses";
-import { solutionIndex } from "./words";
 import { GAME_NAME } from "../constants/strings";
 import { MAX_CHALLENGES } from "../constants/settings";
 import { UAParser } from "ua-parser-js";
@@ -11,6 +10,8 @@ const device = parser.getDevice();
 
 export const getTextToShare = (
   guesses: string[],
+  solution: string,
+  solutionIndex: number,
   lost: boolean,
   isHardMode: boolean,
   isDarkMode: boolean,
@@ -19,7 +20,7 @@ export const getTextToShare = (
 ) => {
   const textToShare =
     `${GAME_NAME} ${solutionIndex + 1} ${lost ? "X" : guesses.length}/${MAX_CHALLENGES}${isHardMode ? "*" : ""}\n\n` +
-    generateEmojiGrid(guesses, getEmojiTiles(isDarkMode, isHighContrastMode)) +
+    generateEmojiGrid(guesses, getEmojiTiles(isDarkMode, isHighContrastMode), solution) +
     `\n\n${process.env.REACT_APP_BASE_URL!}`;
 
   return isUrl ? encodeURIComponent(textToShare) : textToShare;
@@ -27,13 +28,23 @@ export const getTextToShare = (
 
 export const shareStatus = (
   guesses: string[],
+  solution: string,
+  solutionIndex: number,
   lost: boolean,
   isHardMode: boolean,
   isDarkMode: boolean,
   isHighContrastMode: boolean,
   handleShareToClipboard: () => void
 ) => {
-  const textToShare = getTextToShare(guesses, lost, isHardMode, isDarkMode, isHighContrastMode);
+  const textToShare = getTextToShare(
+    guesses,
+    solution,
+    solutionIndex,
+    lost,
+    isHardMode,
+    isDarkMode,
+    isHighContrastMode
+  );
 
   const shareData = { text: textToShare };
 
@@ -54,10 +65,10 @@ export const shareStatus = (
   }
 };
 
-export const generateEmojiGrid = (guesses: string[], tiles: string[]) => {
+export const generateEmojiGrid = (guesses: string[], tiles: string[], solution: string) => {
   return guesses
     .map((guess) => {
-      const status = getGuessStatuses(guess);
+      const status = getGuessStatuses(guess, solution);
       return guess
         .split("")
         .map((_, i) => {

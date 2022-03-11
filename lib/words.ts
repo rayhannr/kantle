@@ -12,21 +12,21 @@ export const isWordInWordList = (word: string) => {
   return WORDS_SET.has(localeAwareLowerCase(word)) || VALID_GUESSES_SET.has(localeAwareLowerCase(word));
 };
 
-export const isWinningWord = (word: string) => {
+export const isWinningWord = (word: string, solution: string) => {
   return solution === word;
 };
 
 // build a set of previously revealed letters - present and correct
 // guess must use correct letters in that space and any other revealed letters
 // also check if all revealed instances of a letter are used (i.e. two C's)
-export const findFirstUnusedReveal = (word: string, guesses: string[]) => {
+export const findFirstUnusedReveal = (word: string, guesses: string[], solution: string) => {
   if (guesses.length === 0) {
     return false;
   }
 
   const lettersLeftArray = new Array<string>();
   const guess = guesses[guesses.length - 1];
-  const statuses = getGuessStatuses(guess);
+  const statuses = getGuessStatuses(guess, solution);
   const splitWord = unicodeSplit(word);
   const splitGuess = unicodeSplit(guess);
 
@@ -87,9 +87,9 @@ export const decryptWithAES = (ciphertext: string) => {
 
 export const capitalize = (name: string) => name.slice(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 
-export const getWordOfDay = () => {
+export const getWordOfDay = (timestamp?: number) => {
   const epochMs = new Date(2022, 2, 8).valueOf();
-  const now = Date.now();
+  const now = timestamp ? new Date(timestamp).getTime() : Date.now();
   const msInDay = 86400000;
   const index = Math.floor((now - epochMs) / msInDay);
   const nextday = (index + 1) * msInDay + epochMs;
@@ -101,5 +101,3 @@ export const getWordOfDay = () => {
     tomorrow: nextday,
   };
 };
-
-export const { solution, solutionIndex, tomorrow } = getWordOfDay();

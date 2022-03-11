@@ -1,10 +1,16 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsResult, NextPage } from "next";
 import Head from "next/head";
+import { useEffect } from "react";
 import App from "../components/App";
 import { GAME_DESCRIPTION, GAME_TITLE } from "../constants/strings";
 import { AlertProvider } from "../context/AlertContext";
+import { SolutionProvider } from "../context/SolutionContext";
 
-const Home: NextPage = () => {
+interface Props {
+  currentTimestamp: number;
+}
+
+const Home: NextPage<Props> = ({ currentTimestamp }) => {
   return (
     <>
       <Head>
@@ -30,11 +36,20 @@ const Home: NextPage = () => {
           content="game, permainan, main, tebak, kata, rahasia, clue, petunjuk, wordle, bahasa, indonesia, kbbi, kantle"
         />
       </Head>
-      <AlertProvider>
-        <App />
-      </AlertProvider>
+      <SolutionProvider timestamp={currentTimestamp}>
+        <AlertProvider>
+          <App />
+        </AlertProvider>
+      </SolutionProvider>
     </>
   );
 };
 
 export default Home;
+
+export function getServerSideProps(): GetServerSidePropsResult<Props> {
+  const currentTimestamp = Date.now();
+  return {
+    props: { currentTimestamp },
+  };
+}

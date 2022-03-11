@@ -2,7 +2,7 @@ export const GAME_NAME = process.env.REACT_APP_GAME_NAME!;
 
 export const WIN_MESSAGES = [
   "Gokil!",
-  "GGWP",
+  "Mantap",
   "Wedeeeeeh",
   "Wadidaw",
   "Sakti",

@@ -2,6 +2,7 @@ import { CharStatus, getGuessStatuses } from "../../lib/statuses";
 import { Cell } from "./Cell";
 import { unicodeSplit } from "../../lib/words";
 import { useEffect, useState } from "react";
+import { useSolution } from "../../context/SolutionContext";
 
 type Props = {
   guess: string;
@@ -12,9 +13,10 @@ type Props = {
 export const CompletedRow = ({ guess, isRevealing, isDancing }: Props) => {
   const [statuses, setStatuses] = useState<CharStatus[]>([]);
   const splitGuess = unicodeSplit(guess);
+  const { solution } = useSolution();
 
   useEffect(() => {
-    setStatuses(getGuessStatuses(guess));
+    setStatuses(getGuessStatuses(guess, solution));
   }, [guess]);
 
   return (
