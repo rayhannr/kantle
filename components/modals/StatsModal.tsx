@@ -14,6 +14,7 @@ import {
 } from "../../constants/strings";
 import { ShareIcon } from "@heroicons/react/outline";
 import { useSolution } from "../../context/SolutionContext";
+import { getKBBIUrl } from "../../lib/stats";
 
 type Props = {
   isOpen: boolean;
@@ -80,7 +81,15 @@ export const StatsModal = ({
           {!!solutionMeaning && (
             <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
               <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
-              <p className="text-xs">{capitalize(solutionMeaning)}</p>
+              <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
+              <a
+                href={getKBBIUrl(solution)}
+                rel="noreferrer"
+                target="_blank"
+                className="text-sm text-blue-500 dark:text-sky-500 outline-none hover:underline hover:underline-offset-4"
+              >
+                Lihat di KBBI
+              </a>
             </div>
           )}
           <div className="mt-5 sm:mt-6 flex dark:text-white">

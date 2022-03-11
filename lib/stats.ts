@@ -46,3 +46,5 @@ const getSuccessRate = (gameStats: GameStats) => {
 
   return Math.round((100 * (totalGames - gamesFailed)) / Math.max(totalGames, 1));
 };
+
+export const getKBBIUrl = (keyword: string) => `https://kbbi.kemdikbud.go.id/entri/${keyword.toLowerCase()}`;
