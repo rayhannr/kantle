@@ -11,6 +11,8 @@ import {
   WORD_NOT_FOUND_MESSAGE,
   CORRECT_WORD_MESSAGE,
   HARD_MODE_ALERT_MESSAGE,
+  THEME_KEY,
+  GAME_MODE_KEY,
 } from "../constants/strings";
 import {
   MAX_WORD_LENGTH,
@@ -34,15 +36,16 @@ import {
   saveGameStateToLocalStorage,
   setStoredIsHighContrastMode,
   getStoredIsHighContrastMode,
+  getFromStorage,
+  setToStorage,
 } from "../lib/localStorage";
 import { default as GraphemeSplitter } from "grapheme-splitter";
 
 import { AlertContainer } from "../components/alerts/AlertContainer";
 import { useAlert } from "../context/AlertContext";
 import { Navbar } from "../components/navbar/Navbar";
-import { getFromStorage, isInClient } from "../lib/dom";
+import { isInClient } from "../lib/dom";
 import Head from "next/head";
-import KBBI from "kbbi.js";
 import { useSolution } from "../context/SolutionContext";
 
 function App() {
@@ -58,7 +61,7 @@ function App() {
   const [currentRowClass, setCurrentRowClass] = useState("");
   const [isGameLost, setIsGameLost] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
-    getFromStorage("theme") ? getFromStorage("theme") === "dark" : prefersDarkMode ? true : false
+    getFromStorage(THEME_KEY) ? getFromStorage(THEME_KEY) === "dark" : prefersDarkMode ? true : false
   );
   const [isHighContrastMode, setIsHighContrastMode] = useState(getStoredIsHighContrastMode());
   const [isRevealing, setIsRevealing] = useState(false);
@@ -86,18 +89,18 @@ function App() {
   const [solutionMeaning, setSolutionMeaning] = useState<string>("");
 
   const [isHardMode, setIsHardMode] = useState(
-    getFromStorage("gameMode") ? getFromStorage("gameMode") === "hard" : false
+    getFromStorage(GAME_MODE_KEY) ? getFromStorage(GAME_MODE_KEY) === "hard" : false
   );
 
   const handleDarkMode = (isDark: boolean) => {
     setIsDarkMode(isDark);
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    setToStorage(THEME_KEY, isDark ? "dark" : "light");
   };
 
   const handleHardMode = (isHard: boolean) => {
     if (guesses.length === 0 || localStorage.getItem("gameMode") === "hard") {
       setIsHardMode(isHard);
-      localStorage.setItem("gameMode", isHard ? "hard" : "normal");
+      setToStorage(GAME_MODE_KEY, isHard ? "hard" : "normal");
     } else {
       showErrorAlert(HARD_MODE_ALERT_MESSAGE);
     }
@@ -193,7 +196,7 @@ function App() {
 
   useEffect(() => {
     if (!isGameWon && !isGameLost) return;
-    fetch(`/api/${solution}`)
+    fetch(`/api/define/${solution}`)
       .then((res) => res.json())
       .then((result) => {
         if (result.error) throw result.error;

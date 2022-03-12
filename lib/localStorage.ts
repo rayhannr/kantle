@@ -1,7 +1,40 @@
-import { getFromStorage, isInClient, setToStorage } from "./dom";
+import {
+  GAME_MODE_KEY,
+  GAME_NAME,
+  GAME_STATE_KEY,
+  GAME_STAT_KEY,
+  HIGH_CONSTRAST_KEY,
+  THEME_KEY,
+} from "../constants/strings";
+import { isInClient } from "./dom";
 
-const gameStateKey = "gameState";
-const highContrastKey = "highContrast";
+const removeGameNameFromKey = (key: string) => key.replace(`${GAME_NAME.toLowerCase()}:`, "");
+
+export const getFromStorage = (key: string) => {
+  if (!isInClient()) return "";
+
+  return localStorage.getItem(key) || localStorage.getItem(removeGameNameFromKey(key));
+};
+
+export const setToStorage = (key: string, value: string) => {
+  if (!isInClient()) return;
+  localStorage.setItem(key, value);
+  localStorage.removeItem(removeGameNameFromKey(key));
+};
+
+export const removeFromStorage = (key: string) => {
+  if (!isInClient()) return;
+  localStorage.removeItem(key);
+  localStorage.removeItem(removeGameNameFromKey(key));
+};
+
+export const clearLocalStorage = () => {
+  removeFromStorage(GAME_STATE_KEY);
+  removeFromStorage(GAME_STAT_KEY);
+  removeFromStorage(HIGH_CONSTRAST_KEY);
+  removeFromStorage(THEME_KEY);
+  removeFromStorage(GAME_MODE_KEY);
+};
 
 type StoredGameState = {
   guesses: string[];
@@ -9,15 +42,13 @@ type StoredGameState = {
 };
 
 export const saveGameStateToLocalStorage = (gameState: StoredGameState) => {
-  isInClient() && localStorage.setItem(gameStateKey, JSON.stringify(gameState));
+  setToStorage(GAME_STATE_KEY, JSON.stringify(gameState));
 };
 
 export const loadGameStateFromLocalStorage = () => {
-  const state = getFromStorage(gameStateKey);
+  const state = getFromStorage(GAME_STATE_KEY);
   return state ? (JSON.parse(state) as StoredGameState) : null;
 };
-
-const gameStatKey = "gameStats";
 
 export type GameStats = {
   winDistribution: number[];
@@ -30,23 +61,23 @@ export type GameStats = {
 };
 
 export const saveStatsToLocalStorage = (gameStats: GameStats) => {
-  setToStorage(gameStatKey, JSON.stringify(gameStats));
+  setToStorage(GAME_STAT_KEY, JSON.stringify(gameStats));
 };
 
 export const loadStatsFromLocalStorage = () => {
-  const stats = getFromStorage(gameStatKey);
+  const stats = getFromStorage(GAME_STAT_KEY);
   return stats ? (JSON.parse(stats) as GameStats) : null;
 };
 
 export const setStoredIsHighContrastMode = (isHighContrast: boolean) => {
   if (isHighContrast) {
-    setToStorage(highContrastKey, "1");
+    setToStorage(HIGH_CONSTRAST_KEY, "1");
   } else {
-    localStorage.removeItem(highContrastKey);
+    removeFromStorage(HIGH_CONSTRAST_KEY);
   }
 };
 
 export const getStoredIsHighContrastMode = () => {
-  const highContrast = getFromStorage(highContrastKey);
+  const highContrast = getFromStorage(HIGH_CONSTRAST_KEY);
   return highContrast === "1";
 };

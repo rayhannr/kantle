@@ -32,3 +32,10 @@ export const SOLUTION_PASSPHRASE = process.env.REACT_APP_SOLUTION_PASSPHRASE || 
 export const GAME_TITLE = "Kantle - Permainan Tebak Kata 6 Huruf";
 export const GAME_DESCRIPTION =
   "Tebak kata Bahasa Indonesia dalam 6 kali percobaan. Selalu ada kata baru setiap harinya.";
+
+const setLocalStorageKeyName = (key: string) => `${GAME_NAME.toLowerCase()}:${key}`;
+export const GAME_STAT_KEY = setLocalStorageKeyName("gameStats");
+export const GAME_STATE_KEY = setLocalStorageKeyName("gameState");
+export const THEME_KEY = setLocalStorageKeyName("theme");
+export const GAME_MODE_KEY = setLocalStorageKeyName("gameMode");
+export const HIGH_CONSTRAST_KEY = setLocalStorageKeyName("highContrast");
