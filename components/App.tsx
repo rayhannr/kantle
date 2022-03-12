@@ -47,7 +47,7 @@ import { useSolution } from "../context/SolutionContext";
 
 function App() {
   const prefersDarkMode = isInClient() && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const { solution } = useSolution();
+  const { solution, solutionIndex } = useSolution();
 
   const { showError: showErrorAlert, showSuccess: showSuccessAlert } = useAlert();
   const [currentGuess, setCurrentGuess] = useState("");
@@ -166,12 +166,12 @@ function App() {
       setCurrentGuess("");
 
       if (winningWord) {
-        setStats(addStatsForCompletedGame(stats, guesses.length));
+        setStats(addStatsForCompletedGame(stats, guesses.length, solutionIndex));
         return setIsGameWon(true);
       }
 
       if (guesses.length === MAX_CHALLENGES - 1) {
-        setStats(addStatsForCompletedGame(stats, guesses.length + 1));
+        setStats(addStatsForCompletedGame(stats, guesses.length + 1, solutionIndex));
         setIsGameLost(true);
         showErrorAlert(CORRECT_WORD_MESSAGE(solution), {
           persist: true,
@@ -200,7 +200,7 @@ function App() {
         setSolutionMeaning(result.arti[0]);
       })
       .catch((error) => console.error(error));
-  }, [isGameLost, isGameWon]);
+  }, [isGameLost, isGameWon, solution]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -218,7 +218,7 @@ function App() {
 
   useEffect(() => {
     saveGameStateToLocalStorage({ guesses, solution: encryptWithAES(solution) });
-  }, [guesses]);
+  }, [guesses, solution]);
 
   useEffect(() => {
     if (isGameWon) {

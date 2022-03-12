@@ -72,7 +72,7 @@ export const Keyboard = ({ onChar, onDelete, onEnter, guesses, isRevealing }: Pr
             height="24"
             viewBox="0 0 24 24"
             width="24"
-            className="w-6 h-6 fill-slate-900 dark:fill-white"
+            className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 fill-slate-900 dark:fill-white"
           >
             <path
               fill="var(--color-tone-1)"

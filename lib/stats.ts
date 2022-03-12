@@ -3,19 +3,22 @@ import { GameStats, loadStatsFromLocalStorage, saveStatsToLocalStorage } from ".
 
 // In stats array elements 0-5 are successes in 1-6 trys
 
-export const addStatsForCompletedGame = (gameStats: GameStats, count: number) => {
+export const addStatsForCompletedGame = (gameStats: GameStats, count: number, newSolutionIndex: number) => {
   // Count is number of incorrect guesses before end.
   const stats = { ...gameStats };
 
   stats.totalGames += 1;
+  stats.lastSolutionIndex = newSolutionIndex;
 
   if (count >= MAX_CHALLENGES) {
     // A fail situation
     stats.currentStreak = 0;
     stats.gamesFailed += 1;
   } else {
+    const oldSolutionIndex = gameStats.lastSolutionIndex;
+
     stats.winDistribution[count] += 1;
-    stats.currentStreak += 1;
+    stats.currentStreak = newSolutionIndex - oldSolutionIndex > 1 ? 1 : stats.currentStreak + 1;
 
     if (stats.bestStreak < stats.currentStreak) {
       stats.bestStreak = stats.currentStreak;
@@ -35,6 +38,7 @@ const defaultStats: GameStats = {
   bestStreak: 0,
   totalGames: 0,
   successRate: 0,
+  lastSolutionIndex: 0,
 };
 
 export const loadStats = () => {

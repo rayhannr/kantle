@@ -17,7 +17,7 @@ export const CompletedRow = ({ guess, isRevealing, isDancing }: Props) => {
 
   useEffect(() => {
     setStatuses(getGuessStatuses(guess, solution));
-  }, [guess]);
+  }, [guess, solution]);
 
   return (
     <div className="flex justify-center mb-1">
