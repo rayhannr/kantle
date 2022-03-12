@@ -2,7 +2,7 @@ import Countdown from "react-countdown";
 import { StatBar } from "../stats/StatBar";
 import { Histogram } from "../stats/Histogram";
 import { GameStats } from "../../lib/localStorage";
-import { getTextToShare, shareStatus } from "../../lib/share";
+import { getTextToShare, shareImage, ShareProps, shareStatus } from "../../lib/share";
 import { capitalize } from "../../lib/words";
 import { BaseModal } from "./BaseModal";
 import {
@@ -11,10 +11,12 @@ import {
   NEW_WORD_TEXT,
   SHARE_TEXT,
   TWEET_TEXT,
+  IMAGE_TEXT,
 } from "../../constants/strings";
-import { ShareIcon } from "@heroicons/react/outline";
+import { ShareIcon, PhotographIcon } from "@heroicons/react/outline";
 import { useSolution } from "../../context/SolutionContext";
 import { getKBBIUrl } from "../../lib/stats";
+import Button from "../Button";
 
 type Props = {
   isOpen: boolean;
@@ -62,6 +64,16 @@ export const StatsModal = ({
 }: Props) => {
   const { solution, solutionIndex, tomorrow } = useSolution();
 
+  const shareParams: ShareProps = {
+    guesses,
+    solution,
+    solutionIndex,
+    isDarkMode,
+    isGameLost,
+    isHardMode,
+    isHighContrastMode,
+  };
+
   if (gameStats.totalGames <= 0) {
     return (
       <BaseModal title={STATISTICS_TITLE} isOpen={isOpen} handleClose={handleClose}>
@@ -102,37 +114,17 @@ export const StatsModal = ({
               />
             </div>
             <div className="w-1/2 flex flex-col items-center">
-              <button
-                type="button"
-                className="my-2 w-full max-w-[120px] flex justify-center items-center rounded-md border border-transparent shadow-sm p-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none"
-                onClick={() => {
-                  shareStatus(
-                    guesses,
-                    solution,
-                    solutionIndex,
-                    isGameLost,
-                    isHardMode,
-                    isDarkMode,
-                    isHighContrastMode,
-                    handleShareToClipboard
-                  );
-                }}
-              >
+              <Button onClick={() => shareStatus({ ...shareParams, handleShareToClipboard })} className="mt-2">
                 {SHARE_TEXT}
                 <ShareIcon className="h-5 w-5 ml-3" />
-              </button>
+              </Button>
+              <Button onClick={() => shareImage({ ...shareParams })} className="bg-ig my-2" isPrimary={false}>
+                {IMAGE_TEXT}
+                <PhotographIcon className="h-5 w-5 ml-3" />
+              </Button>
               <a
                 className="p-2 w-full max-w-[120px] bg-sky-400 hover:bg-sky-500 text-white flex justify-center items-center text-base font-medium shadow-sm rounded-md"
-                href={`https://twitter.com/intent/tweet?text=${getTextToShare(
-                  guesses,
-                  solution,
-                  solutionIndex,
-                  isGameLost,
-                  isHardMode,
-                  isDarkMode,
-                  isHighContrastMode,
-                  true
-                )}`}
+                href={`https://twitter.com/intent/tweet?text=${getTextToShare({ ...shareParams, isUrl: true })}`}
                 target="_blank"
                 rel="noreferrer"
               >

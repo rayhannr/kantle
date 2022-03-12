@@ -3,6 +3,7 @@ import { SettingsToggle } from "./SettingsToggle";
 import { HARD_MODE_DESCRIPTION, HIGH_CONTRAST_MODE_DESCRIPTION } from "../../constants/strings";
 import { clearLocalStorage } from "../../lib/localStorage";
 import { isInClient } from "../../lib/dom";
+import Button from "../Button";
 
 type Props = {
   isOpen: boolean;
@@ -47,13 +48,9 @@ export const SettingsModal = ({
           handleFlag={handleHighContrastMode}
           description={HIGH_CONTRAST_MODE_DESCRIPTION}
         />
-        <button
-          type="button"
-          className="my-2 w-full max-w-[120px] flex justify-center items-center rounded-md border border-transparent shadow-sm p-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none"
-          onClick={clearLocalStorageAndReload}
-        >
+        <Button className="my-2 border-transparent" onClick={clearLocalStorageAndReload}>
           Reset Data
-        </button>
+        </Button>
       </div>
     </BaseModal>
   );
