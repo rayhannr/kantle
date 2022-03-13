@@ -34,6 +34,7 @@ type Props = {
   handleShareToClipboard: () => void;
   isHardMode: boolean;
   isHighContrastMode: boolean;
+  isMounted: boolean;
 };
 
 const TwitterIcon = () => (
@@ -62,6 +63,7 @@ export const StatsModal = ({
   handleShareToClipboard,
   isHardMode,
   isHighContrastMode,
+  isMounted,
 }: Props) => {
   const { solution, solutionIndex, tomorrow } = useSolution();
   const { isDarkMode } = useExtendedTheme();
@@ -93,13 +95,13 @@ export const StatsModal = ({
 
   if (gameStats.totalGames <= 0) {
     return (
-      <BaseModal title={STATISTICS_TITLE} handleClose={handleClose}>
+      <BaseModal title={STATISTICS_TITLE} {...{ handleClose, isMounted }}>
         <StatBar gameStats={gameStats} />
       </BaseModal>
     );
   }
   return (
-    <BaseModal title={STATISTICS_TITLE} handleClose={handleClose}>
+    <BaseModal title={STATISTICS_TITLE} {...{ handleClose, isMounted }}>
       <StatBar gameStats={gameStats} />
       <h4 className="mt-3 text-lg leading-6 font-semibold text-slate-900 dark:text-gray-100">
         {GUESS_DISTRIBUTION_TEXT}

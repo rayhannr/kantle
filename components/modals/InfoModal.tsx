@@ -3,11 +3,12 @@ import { BaseModal } from "./BaseModal";
 
 type Props = {
   handleClose: () => void;
+  isMounted: boolean;
 };
 
-export const InfoModal = ({ handleClose }: Props) => {
+export const InfoModal = ({ handleClose, isMounted }: Props) => {
   return (
-    <BaseModal title="Cara Main" handleClose={handleClose}>
+    <BaseModal title="Cara Main" {...{ handleClose, isMounted }}>
       <p className="text-sm text-gray-500 dark:text-gray-300 mb-4">
         Tebak kata dalam 6 percobaan. 1 hari 1 kata rahasia.
       </p>

@@ -1,42 +1,65 @@
 import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import classNames from "classnames";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type Props = {
   title: string;
   children: React.ReactNode;
   handleClose: () => void;
+  isMounted: boolean;
 };
 
-export const BaseModal = ({ title, children, handleClose }: Props) => {
+const OVERLAY_INITIAL_CLASS = "opacity-0";
+const CONTENT_INITIAL_CLASS = "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95";
+const IS_MOUNTED_CLASS = "ease-out duration-300";
+const IS_UNMOUNTED_CLASS = "ease-in duration-200";
+
+const getConditionalClassOnMount = (isMounted: boolean) => {
+  return isMounted ? IS_MOUNTED_CLASS : IS_UNMOUNTED_CLASS;
+};
+
+export const BaseModal = ({ title, children, handleClose, isMounted }: Props) => {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [overlayClassName, setOverlayClassName] = useState<string>(OVERLAY_INITIAL_CLASS);
+  const [contentClassName, setContentClassName] = useState<string>(CONTENT_INITIAL_CLASS);
+
+  useEffect(() => {
+    setOverlayClassName(isMounted ? "opacity-100" : OVERLAY_INITIAL_CLASS);
+    setContentClassName(isMounted ? "opacity-100 translate-y-0 sm:scale-100" : CONTENT_INITIAL_CLASS);
+  }, [isMounted]);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    contentRef.current.classList.remove(...CONTENT_INITIAL_CLASS.split(" "));
+    contentRef.current.classList.add("opacity-100", "translate-y-0", "sm:scale-100");
+  }, [contentRef.current]);
+
   return (
     <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" open onClose={handleClose}>
       <div className="flex items-center justify-center min-h-screen py-10 px-4 text-center sm:block sm:p-0">
-        {/* <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          > */}
-        <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        {/* </Transition.Child> */}
+        <Dialog.Overlay
+          className={classNames(
+            "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity",
+            overlayClassName,
+            getConditionalClassOnMount(isMounted)
+          )}
+          ref={overlayRef}
+        />
 
         {/* This element is to trick the browser into centering the modal contents. */}
         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
           &#8203;
         </span>
-        {/* <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          > */}
-        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 dark:bg-gray-800">
+        <div
+          className={classNames(
+            "inline-block align-bottom bg-white dark:bg-slate-900 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6",
+            contentClassName,
+            getConditionalClassOnMount(isMounted)
+          )}
+          ref={contentRef}
+        >
           <div className="absolute right-4 top-4">
             <XIcon
               className="h-5 w-5 cursor-pointer stroke-slate-900 dark:stroke-white"

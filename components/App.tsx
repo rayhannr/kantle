@@ -21,6 +21,7 @@ import {
   GAME_LOST_INFO_DELAY,
   WELCOME_INFO_MODAL_MS,
   DANCE_TIME_MS,
+  MODAL_EXIT_DURATION,
 } from "../constants/settings";
 import {
   isWordInWordList,
@@ -48,6 +49,7 @@ import { Navbar } from "../components/navbar/Navbar";
 import Head from "next/head";
 import { useSolution } from "../context/SolutionContext";
 import { useExtendedTheme } from "../lib/theme";
+import { useDelayUnmount } from "../lib/animation";
 
 function App() {
   const { solution, solutionIndex } = useSolution();
@@ -56,9 +58,14 @@ function App() {
   const { showError: showErrorAlert, showSuccess: showSuccessAlert } = useAlert();
   const [currentGuess, setCurrentGuess] = useState("");
   const [isGameWon, setIsGameWon] = useState(false);
+
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const shouldRenderInfoModal = useDelayUnmount(isInfoModalOpen, MODAL_EXIT_DURATION);
+  const shouldRenderStatsModal = useDelayUnmount(isStatsModalOpen, MODAL_EXIT_DURATION);
+  const shouldRenderSettingsModal = useDelayUnmount(isSettingsModalOpen, MODAL_EXIT_DURATION);
+
   const [currentRowClass, setCurrentRowClass] = useState("");
   const [isGameLost, setIsGameLost] = useState(false);
   const [isHighContrastMode, setIsHighContrastMode] = useState(getStoredIsHighContrastMode());
@@ -248,8 +255,10 @@ function App() {
           />
         </div>
         <Keyboard onChar={onChar} onDelete={onDelete} onEnter={onEnter} guesses={guesses} isRevealing={isRevealing} />
-        {isInfoModalOpen && <InfoModal handleClose={() => setIsInfoModalOpen(false)} />}
-        {isStatsModalOpen && (
+        {shouldRenderInfoModal && (
+          <InfoModal handleClose={() => setIsInfoModalOpen(false)} isMounted={isInfoModalOpen} />
+        )}
+        {shouldRenderStatsModal && (
           <StatsModal
             handleClose={() => setIsStatsModalOpen(false)}
             guesses={guesses}
@@ -259,15 +268,17 @@ function App() {
             handleShareToClipboard={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
             isHardMode={isHardMode}
             isHighContrastMode={isHighContrastMode}
+            isMounted={isStatsModalOpen}
           />
         )}
-        {isSettingsModalOpen && (
+        {shouldRenderSettingsModal && (
           <SettingsModal
             handleClose={() => setIsSettingsModalOpen(false)}
             isHardMode={isHardMode}
             handleHardMode={handleHardMode}
             isHighContrastMode={isHighContrastMode}
             handleHighContrastMode={handleHighContrastMode}
+            isMounted={isSettingsModalOpen}
           />
         )}
         <AlertContainer />

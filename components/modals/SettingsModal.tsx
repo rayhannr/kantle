@@ -12,6 +12,7 @@ type Props = {
   handleHardMode: Function;
   isHighContrastMode: boolean;
   handleHighContrastMode: Function;
+  isMounted: boolean;
 };
 
 export const SettingsModal = ({
@@ -20,6 +21,7 @@ export const SettingsModal = ({
   handleHardMode,
   isHighContrastMode,
   handleHighContrastMode,
+  isMounted,
 }: Props) => {
   const { isDarkMode, setTheme } = useExtendedTheme();
   const clearLocalStorageAndReload = () => {
@@ -29,7 +31,7 @@ export const SettingsModal = ({
   };
 
   return (
-    <BaseModal title="Pengaturan" handleClose={handleClose}>
+    <BaseModal title="Pengaturan" {...{ handleClose, isMounted }}>
       <div className="flex flex-col mt-2 divide-y">
         <SettingsToggle
           settingName="Mode Susah"
