@@ -12,11 +12,14 @@ import {
   SHARE_TEXT,
   TWEET_TEXT,
   IMAGE_TEXT,
+  IMAGE_CHECKBOX_TEXT,
 } from "../../constants/strings";
 import { ShareIcon, PhotographIcon } from "@heroicons/react/outline";
 import { useSolution } from "../../context/SolutionContext";
 import { getKBBIUrl } from "../../lib/stats";
 import Button from "../Button";
+import { useState } from "react";
+import { Checkbox } from "../Checkbox";
 
 type Props = {
   isOpen: boolean;
@@ -63,6 +66,11 @@ export const StatsModal = ({
   solutionMeaning,
 }: Props) => {
   const { solution, solutionIndex, tomorrow } = useSolution();
+  const [isWithAnswer, setIsWithAnswer] = useState<boolean>(false);
+
+  const onChangeIsWithAnswer = () => {
+    setIsWithAnswer((prev) => !prev);
+  };
 
   const shareParams: ShareProps = {
     guesses,
@@ -113,17 +121,22 @@ export const StatsModal = ({
                 daysInHours={true}
               />
             </div>
-            <div className="w-1/2 flex flex-col items-center">
+            <div className="w-1/2 flex flex-col">
               <Button onClick={() => shareStatus({ ...shareParams, handleShareToClipboard })} className="mt-2">
                 {SHARE_TEXT}
                 <ShareIcon className="h-5 w-5 ml-3" />
               </Button>
-              <Button onClick={() => shareImage({ ...shareParams })} className="bg-ig my-2" isPrimary={false}>
+              <Button
+                onClick={() => shareImage({ ...shareParams, isWithAnswer })}
+                className="bg-ig my-2"
+                isPrimary={false}
+              >
                 {IMAGE_TEXT}
                 <PhotographIcon className="h-5 w-5 ml-3" />
               </Button>
+              <Checkbox isChecked={isWithAnswer} onChange={onChangeIsWithAnswer} label={IMAGE_CHECKBOX_TEXT} />
               <a
-                className="p-2 w-full max-w-[120px] bg-sky-400 hover:bg-sky-500 text-white flex justify-center items-center text-base font-medium shadow-sm rounded-md"
+                className="p-2 w-full bg-sky-400 hover:bg-sky-500 text-white flex justify-center items-center text-base font-medium shadow-sm rounded-md"
                 href={`https://twitter.com/intent/tweet?text=${getTextToShare({ ...shareParams, isUrl: true })}`}
                 target="_blank"
                 rel="noreferrer"

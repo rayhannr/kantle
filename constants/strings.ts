@@ -25,6 +25,7 @@ export const GUESS_DISTRIBUTION_TEXT = "Distribusi Tebakan";
 export const NEW_WORD_TEXT = "Kata berikutnya";
 export const SHARE_TEXT = "Share";
 export const IMAGE_TEXT = "Image";
+export const IMAGE_CHECKBOX_TEXT = "Sertakan jawaban pada gambar";
 export const TWEET_TEXT = "Tweet";
 export const TOTAL_TRIES_TEXT = "Dimainkan";
 export const SUCCESS_RATE_TEXT = "Menang";

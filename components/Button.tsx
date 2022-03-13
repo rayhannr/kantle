@@ -12,7 +12,7 @@ const Button = ({ onClick, className, children, isPrimary = true }: PropsWithChi
     <button
       type="button"
       className={classNames(
-        "w-full max-w-[120px] flex justify-center items-center rounded-md shadow-sm p-2 text-base font-medium text-white focus:outline-none",
+        "w-full flex justify-center items-center rounded-md shadow-sm p-2 text-base font-medium text-white focus:outline-none",
         className,
         isPrimary && "bg-indigo-600 hover:bg-indigo-700"
       )}

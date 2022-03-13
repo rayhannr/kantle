@@ -48,7 +48,7 @@ export const SettingsModal = ({
           handleFlag={handleHighContrastMode}
           description={HIGH_CONTRAST_MODE_DESCRIPTION}
         />
-        <Button className="my-2 border-transparent" onClick={clearLocalStorageAndReload}>
+        <Button className="my-2 border-transparent max-w-[120px]" onClick={clearLocalStorageAndReload}>
           Reset Data
         </Button>
       </div>

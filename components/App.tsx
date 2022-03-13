@@ -252,7 +252,7 @@ function App() {
   }, [isGameWon, isGameLost, isRevealing, showSuccessAlert]);
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex flex-col md:h-screen">
       <Head>
         <meta name="theme-color" content={isDarkMode ? "#0f172a" : "#ecfeff"} />
       </Head>

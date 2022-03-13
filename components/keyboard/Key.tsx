@@ -41,7 +41,7 @@ export const Key = ({ children, status, width = 40, value, onClick, isRevealing 
   };
 
   return (
-    <button style={styles} className={classes} onClick={handleClick}>
+    <button style={styles} className={classes} onClick={handleClick} aria-label={value}>
       {children || value}
     </button>
   );
