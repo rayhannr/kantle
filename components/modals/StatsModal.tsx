@@ -1,7 +1,7 @@
 import Countdown from "react-countdown";
 import { StatBar } from "../stats/StatBar";
 import { Histogram } from "../stats/Histogram";
-import { GameStats } from "../../lib/localStorage";
+import { GameStats, getFromStorage, setToStorage } from "../../lib/localStorage";
 import { getTextToShare, shareImage, ShareProps, shareStatus } from "../../lib/share";
 import { capitalize } from "../../lib/words";
 import { BaseModal } from "./BaseModal";
@@ -13,13 +13,16 @@ import {
   TWEET_TEXT,
   IMAGE_TEXT,
   IMAGE_CHECKBOX_TEXT,
+  SOLUTION_MEANING_KEY,
 } from "../../constants/strings";
 import { ShareIcon, PhotographIcon } from "@heroicons/react/outline";
 import { useSolution } from "../../context/SolutionContext";
 import { getKBBIUrl } from "../../lib/stats";
 import Button from "../Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "../Checkbox";
+import useSWR from "swr";
+import { fetcher } from "../../lib/fetcher";
 
 type Props = {
   isOpen: boolean;
@@ -32,7 +35,6 @@ type Props = {
   isHardMode: boolean;
   isDarkMode: boolean;
   isHighContrastMode: boolean;
-  solutionMeaning: string;
 };
 
 const TwitterIcon = () => (
@@ -63,10 +65,19 @@ export const StatsModal = ({
   isHardMode,
   isDarkMode,
   isHighContrastMode,
-  solutionMeaning,
 }: Props) => {
   const { solution, solutionIndex, tomorrow } = useSolution();
   const [isWithAnswer, setIsWithAnswer] = useState<boolean>(false);
+
+  const shouldFetch = (isGameLost || isGameWon) && !getFromStorage(SOLUTION_MEANING_KEY);
+  const { data } = useSWR(shouldFetch ? `/api/define/${solution}` : null, fetcher);
+  const solutionMeaning = data?.arti[0] || getFromStorage(SOLUTION_MEANING_KEY);
+
+  useEffect(() => {
+    if (!data || solutionMeaning === getFromStorage(SOLUTION_MEANING_KEY)) return;
+
+    setToStorage(SOLUTION_MEANING_KEY, solutionMeaning);
+  }, [data]);
 
   const onChangeIsWithAnswer = () => {
     setIsWithAnswer((prev) => !prev);
@@ -98,20 +109,22 @@ export const StatsModal = ({
       <Histogram gameStats={gameStats} />
       {(isGameLost || isGameWon) && (
         <>
-          {!!solutionMeaning && (
-            <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
-              <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
-              <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
-              <a
-                href={getKBBIUrl(solution)}
-                rel="noreferrer"
-                target="_blank"
-                className="text-sm text-blue-500 dark:text-sky-500 outline-none hover:underline hover:underline-offset-4"
-              >
-                Lihat di KBBI
-              </a>
-            </div>
-          )}
+          <div className="min-h-[80px]">
+            {!!solutionMeaning && (
+              <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
+                <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
+                <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
+                <a
+                  href={getKBBIUrl(solution)}
+                  rel="noreferrer"
+                  target="_blank"
+                  className="text-sm text-blue-500 dark:text-sky-500 outline-none hover:underline hover:underline-offset-4"
+                >
+                  Lihat di KBBI
+                </a>
+              </div>
+            )}
+          </div>
           <div className="mt-5 sm:mt-6 flex dark:text-white">
             <div className="w-1/2 mx-auto">
               <h5>{NEW_WORD_TEXT}</h5>

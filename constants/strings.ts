@@ -42,3 +42,4 @@ export const GAME_STATE_KEY = setLocalStorageKeyName("gameState");
 export const THEME_KEY = setLocalStorageKeyName("theme");
 export const GAME_MODE_KEY = setLocalStorageKeyName("gameMode");
 export const HIGH_CONSTRAST_KEY = setLocalStorageKeyName("highContrast");
+export const SOLUTION_MEANING_KEY = setLocalStorageKeyName("solutionMeaning");

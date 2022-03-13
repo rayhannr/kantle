@@ -13,6 +13,7 @@ import {
   HARD_MODE_ALERT_MESSAGE,
   THEME_KEY,
   GAME_MODE_KEY,
+  SOLUTION_MEANING_KEY,
 } from "../constants/strings";
 import {
   MAX_WORD_LENGTH,
@@ -38,6 +39,7 @@ import {
   getStoredIsHighContrastMode,
   getFromStorage,
   setToStorage,
+  removeFromStorage,
 } from "../lib/localStorage";
 import { default as GraphemeSplitter } from "grapheme-splitter";
 
@@ -70,6 +72,7 @@ function App() {
     const loaded = loadGameStateFromLocalStorage();
     const decryptedSolution = decryptWithAES(loaded?.solution || "");
     if (decryptedSolution !== solution) {
+      removeFromStorage(SOLUTION_MEANING_KEY);
       return [];
     }
     const gameWasWon = loaded?.guesses.includes(solution);
@@ -86,7 +89,6 @@ function App() {
   });
 
   const [stats, setStats] = useState(() => loadStats());
-  const [solutionMeaning, setSolutionMeaning] = useState<string>("");
 
   const [isHardMode, setIsHardMode] = useState(
     getFromStorage(GAME_MODE_KEY) ? getFromStorage(GAME_MODE_KEY) === "hard" : false
@@ -195,17 +197,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!isGameWon && !isGameLost) return;
-    fetch(`/api/define/${solution}`)
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.error) throw result.error;
-        setSolutionMeaning(result.arti[0]);
-      })
-      .catch((error) => console.error(error));
-  }, [isGameLost, isGameWon, solution]);
-
-  useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
     } else {
@@ -284,7 +275,6 @@ function App() {
           isHardMode={isHardMode}
           isDarkMode={isDarkMode}
           isHighContrastMode={isHighContrastMode}
-          solutionMeaning={solutionMeaning}
         />
         <SettingsModal
           isOpen={isSettingsModalOpen}
