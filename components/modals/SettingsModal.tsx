@@ -4,28 +4,24 @@ import { HARD_MODE_DESCRIPTION, HIGH_CONTRAST_MODE_DESCRIPTION } from "../../con
 import { clearLocalStorage } from "../../lib/localStorage";
 import { isInClient } from "../../lib/dom";
 import Button from "../Button";
+import { useExtendedTheme } from "../../lib/theme";
 
 type Props = {
-  isOpen: boolean;
   handleClose: () => void;
   isHardMode: boolean;
   handleHardMode: Function;
-  isDarkMode: boolean;
-  handleDarkMode: Function;
   isHighContrastMode: boolean;
   handleHighContrastMode: Function;
 };
 
 export const SettingsModal = ({
-  isOpen,
   handleClose,
   isHardMode,
   handleHardMode,
-  isDarkMode,
-  handleDarkMode,
   isHighContrastMode,
   handleHighContrastMode,
 }: Props) => {
+  const { isDarkMode, setTheme } = useExtendedTheme();
   const clearLocalStorageAndReload = () => {
     if (!isInClient) return;
     clearLocalStorage();
@@ -33,7 +29,7 @@ export const SettingsModal = ({
   };
 
   return (
-    <BaseModal title="Pengaturan" isOpen={isOpen} handleClose={handleClose}>
+    <BaseModal title="Pengaturan" handleClose={handleClose}>
       <div className="flex flex-col mt-2 divide-y">
         <SettingsToggle
           settingName="Mode Susah"
@@ -41,7 +37,11 @@ export const SettingsModal = ({
           handleFlag={handleHardMode}
           description={HARD_MODE_DESCRIPTION}
         />
-        <SettingsToggle settingName="Mode Gelap" flag={isDarkMode} handleFlag={handleDarkMode} />
+        <SettingsToggle
+          settingName="Mode Gelap"
+          flag={isDarkMode}
+          handleFlag={() => setTheme(isDarkMode ? "light" : "dark")}
+        />
         <SettingsToggle
           settingName="Mode Kontras Tinggi"
           flag={isHighContrastMode}

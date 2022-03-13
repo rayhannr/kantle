@@ -2,13 +2,12 @@ import { Cell } from "../grid/Cell";
 import { BaseModal } from "./BaseModal";
 
 type Props = {
-  isOpen: boolean;
   handleClose: () => void;
 };
 
-export const InfoModal = ({ isOpen, handleClose }: Props) => {
+export const InfoModal = ({ handleClose }: Props) => {
   return (
-    <BaseModal title="Cara Main" isOpen={isOpen} handleClose={handleClose}>
+    <BaseModal title="Cara Main" handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300 mb-4">
         Tebak kata dalam 6 percobaan. 1 hari 1 kata rahasia.
       </p>

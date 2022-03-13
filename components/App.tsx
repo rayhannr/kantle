@@ -11,7 +11,6 @@ import {
   WORD_NOT_FOUND_MESSAGE,
   CORRECT_WORD_MESSAGE,
   HARD_MODE_ALERT_MESSAGE,
-  THEME_KEY,
   GAME_MODE_KEY,
   SOLUTION_MEANING_KEY,
 } from "../constants/strings";
@@ -46,13 +45,13 @@ import { default as GraphemeSplitter } from "grapheme-splitter";
 import { AlertContainer } from "../components/alerts/AlertContainer";
 import { useAlert } from "../context/AlertContext";
 import { Navbar } from "../components/navbar/Navbar";
-import { isInClient } from "../lib/dom";
 import Head from "next/head";
 import { useSolution } from "../context/SolutionContext";
+import { useExtendedTheme } from "../lib/theme";
 
 function App() {
-  const prefersDarkMode = isInClient() && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const { solution, solutionIndex } = useSolution();
+  const { isDarkMode } = useExtendedTheme();
 
   const { showError: showErrorAlert, showSuccess: showSuccessAlert } = useAlert();
   const [currentGuess, setCurrentGuess] = useState("");
@@ -62,9 +61,6 @@ function App() {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [currentRowClass, setCurrentRowClass] = useState("");
   const [isGameLost, setIsGameLost] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(
-    getFromStorage(THEME_KEY) ? getFromStorage(THEME_KEY) === "dark" : prefersDarkMode ? true : false
-  );
   const [isHighContrastMode, setIsHighContrastMode] = useState(getStoredIsHighContrastMode());
   const [isRevealing, setIsRevealing] = useState(false);
   const [isDancing, setIsDancing] = useState(false);
@@ -93,11 +89,6 @@ function App() {
   const [isHardMode, setIsHardMode] = useState(
     getFromStorage(GAME_MODE_KEY) ? getFromStorage(GAME_MODE_KEY) === "hard" : false
   );
-
-  const handleDarkMode = (isDark: boolean) => {
-    setIsDarkMode(isDark);
-    setToStorage(THEME_KEY, isDark ? "dark" : "light");
-  };
 
   const handleHardMode = (isHard: boolean) => {
     if (guesses.length === 0 || localStorage.getItem("gameMode") === "hard") {
@@ -197,18 +188,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
     if (isHighContrastMode) {
       document.documentElement.classList.add("high-contrast");
     } else {
       document.documentElement.classList.remove("high-contrast");
     }
-  }, [isDarkMode, isHighContrastMode]);
+  }, [isHighContrastMode]);
 
   useEffect(() => {
     saveGameStateToLocalStorage({ guesses, solution: encryptWithAES(solution) });
@@ -263,29 +248,28 @@ function App() {
           />
         </div>
         <Keyboard onChar={onChar} onDelete={onDelete} onEnter={onEnter} guesses={guesses} isRevealing={isRevealing} />
-        <InfoModal isOpen={isInfoModalOpen} handleClose={() => setIsInfoModalOpen(false)} />
-        <StatsModal
-          isOpen={isStatsModalOpen}
-          handleClose={() => setIsStatsModalOpen(false)}
-          guesses={guesses}
-          gameStats={stats}
-          isGameLost={isGameLost}
-          isGameWon={isGameWon}
-          handleShareToClipboard={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
-          isHardMode={isHardMode}
-          isDarkMode={isDarkMode}
-          isHighContrastMode={isHighContrastMode}
-        />
-        <SettingsModal
-          isOpen={isSettingsModalOpen}
-          handleClose={() => setIsSettingsModalOpen(false)}
-          isHardMode={isHardMode}
-          handleHardMode={handleHardMode}
-          isDarkMode={isDarkMode}
-          handleDarkMode={handleDarkMode}
-          isHighContrastMode={isHighContrastMode}
-          handleHighContrastMode={handleHighContrastMode}
-        />
+        {isInfoModalOpen && <InfoModal handleClose={() => setIsInfoModalOpen(false)} />}
+        {isStatsModalOpen && (
+          <StatsModal
+            handleClose={() => setIsStatsModalOpen(false)}
+            guesses={guesses}
+            gameStats={stats}
+            isGameLost={isGameLost}
+            isGameWon={isGameWon}
+            handleShareToClipboard={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
+            isHardMode={isHardMode}
+            isHighContrastMode={isHighContrastMode}
+          />
+        )}
+        {isSettingsModalOpen && (
+          <SettingsModal
+            handleClose={() => setIsSettingsModalOpen(false)}
+            isHardMode={isHardMode}
+            handleHardMode={handleHardMode}
+            isHighContrastMode={isHighContrastMode}
+            handleHighContrastMode={handleHighContrastMode}
+          />
+        )}
         <AlertContainer />
       </div>
     </div>

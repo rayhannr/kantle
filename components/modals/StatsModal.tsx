@@ -23,9 +23,9 @@ import { useEffect, useState } from "react";
 import { Checkbox } from "../Checkbox";
 import useSWR from "swr";
 import { fetcher } from "../../lib/fetcher";
+import { useExtendedTheme } from "../../lib/theme";
 
 type Props = {
-  isOpen: boolean;
   handleClose: () => void;
   guesses: string[];
   gameStats: GameStats;
@@ -33,7 +33,6 @@ type Props = {
   isGameWon: boolean;
   handleShareToClipboard: () => void;
   isHardMode: boolean;
-  isDarkMode: boolean;
   isHighContrastMode: boolean;
 };
 
@@ -55,7 +54,6 @@ const TwitterIcon = () => (
 );
 
 export const StatsModal = ({
-  isOpen,
   handleClose,
   guesses,
   gameStats,
@@ -63,10 +61,10 @@ export const StatsModal = ({
   isGameWon,
   handleShareToClipboard,
   isHardMode,
-  isDarkMode,
   isHighContrastMode,
 }: Props) => {
   const { solution, solutionIndex, tomorrow } = useSolution();
+  const { isDarkMode } = useExtendedTheme();
   const [isWithAnswer, setIsWithAnswer] = useState<boolean>(false);
 
   const shouldFetch = (isGameLost || isGameWon) && !getFromStorage(SOLUTION_MEANING_KEY);
@@ -77,7 +75,7 @@ export const StatsModal = ({
     if (!data || solutionMeaning === getFromStorage(SOLUTION_MEANING_KEY)) return;
 
     setToStorage(SOLUTION_MEANING_KEY, solutionMeaning);
-  }, [data]);
+  }, [data, solutionMeaning]);
 
   const onChangeIsWithAnswer = () => {
     setIsWithAnswer((prev) => !prev);
@@ -95,13 +93,13 @@ export const StatsModal = ({
 
   if (gameStats.totalGames <= 0) {
     return (
-      <BaseModal title={STATISTICS_TITLE} isOpen={isOpen} handleClose={handleClose}>
+      <BaseModal title={STATISTICS_TITLE} handleClose={handleClose}>
         <StatBar gameStats={gameStats} />
       </BaseModal>
     );
   }
   return (
-    <BaseModal title={STATISTICS_TITLE} isOpen={isOpen} handleClose={handleClose}>
+    <BaseModal title={STATISTICS_TITLE} handleClose={handleClose}>
       <StatBar gameStats={gameStats} />
       <h4 className="mt-3 text-lg leading-6 font-semibold text-slate-900 dark:text-gray-100">
         {GUESS_DISTRIBUTION_TEXT}

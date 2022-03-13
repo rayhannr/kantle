@@ -1,5 +1,5 @@
-export const GAME_NAME = process.env.REACT_APP_GAME_NAME!;
-export const GAME_DOMAIN = process.env.REACT_APP_BASE_URL!.replace("https://", "");
+export const GAME_NAME = process.env.NEXT_PUBLIC_GAME_NAME!;
+export const GAME_DOMAIN = process.env.NEXT_PUBLIC_BASE_URL!.replace("https://", "");
 
 export const WIN_MESSAGES = [
   "Gokil!",
@@ -31,7 +31,7 @@ export const TOTAL_TRIES_TEXT = "Dimainkan";
 export const SUCCESS_RATE_TEXT = "Menang";
 export const CURRENT_STREAK_TEXT = "Runtutan sekarang";
 export const BEST_STREAK_TEXT = "Runtutan tertinggi";
-export const SOLUTION_PASSPHRASE = process.env.REACT_APP_SOLUTION_PASSPHRASE || "";
+export const SOLUTION_PASSPHRASE = process.env.NEXT_PUBLIC_SOLUTION_PASSPHRASE || "";
 export const GAME_TITLE = "Kantle - Permainan Tebak Kata 6 Huruf";
 export const GAME_DESCRIPTION =
   "Tebak kata Bahasa Indonesia dalam 6 kali percobaan. Selalu ada kata baru setiap harinya.";

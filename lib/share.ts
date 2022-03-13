@@ -26,7 +26,7 @@ export const getTextToShare = ({ isUrl = false, ...params }: ShareProps & { isUr
       isHardMode ? "*" : ""
     }\n\n` +
     generateEmojiGrid(guesses, getEmojiTiles(isDarkMode, isHighContrastMode), solution) +
-    `\n\n${process.env.REACT_APP_BASE_URL!}`;
+    `\n\n${process.env.NEXT_PUBLIC_BASE_URL!}`;
 
   return isUrl ? encodeURIComponent(textToShare) : textToShare;
 };

@@ -4,7 +4,7 @@ import Document, { Head, Html, Main, NextScript } from "next/document";
 class MyDocument extends Document {
   render() {
     return (
-      <Html lang={process.env.REACT_APP_LOCALE_STRING}>
+      <Html lang={process.env.NEXT_PUBLIC_LOCALE_STRING}>
         <Head />
         <body>
           <Main />
