@@ -15,7 +15,7 @@ type Props = {
   isMounted: boolean;
 };
 
-export const SettingsModal = ({
+const SettingsModal = ({
   handleClose,
   isHardMode,
   handleHardMode,
@@ -57,3 +57,5 @@ export const SettingsModal = ({
     </BaseModal>
   );
 };
+
+export default SettingsModal;

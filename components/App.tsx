@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Grid } from "./grid/Grid";
 import { Keyboard } from "./keyboard/Keyboard";
-import { InfoModal } from "./modals/InfoModal";
-import { StatsModal } from "./modals/StatsModal";
-import { SettingsModal } from "./modals/SettingsModal";
+const InfoModal = dynamic(() => import("./modals/InfoModal"));
+const StatsModal = dynamic(() => import("./modals/StatsModal"));
+const SettingsModal = dynamic(() => import("./modals/SettingsModal"));
 import {
   WIN_MESSAGES,
   GAME_COPIED_MESSAGE,

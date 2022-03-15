@@ -6,7 +6,7 @@ type Props = {
   isMounted: boolean;
 };
 
-export const InfoModal = ({ handleClose, isMounted }: Props) => {
+const InfoModal = ({ handleClose, isMounted }: Props) => {
   return (
     <BaseModal title="Cara Main" {...{ handleClose, isMounted }}>
       <p className="text-sm text-gray-500 dark:text-gray-300 mb-4">
@@ -73,3 +73,5 @@ export const InfoModal = ({ handleClose, isMounted }: Props) => {
     </BaseModal>
   );
 };
+
+export default InfoModal;

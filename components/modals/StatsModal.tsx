@@ -54,7 +54,7 @@ const TwitterIcon = () => (
   </svg>
 );
 
-export const StatsModal = ({
+const StatsModal = ({
   handleClose,
   guesses,
   gameStats,
@@ -164,3 +164,5 @@ export const StatsModal = ({
     </BaseModal>
   );
 };
+
+export default StatsModal;
