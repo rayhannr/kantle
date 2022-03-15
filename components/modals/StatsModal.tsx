@@ -110,20 +110,22 @@ const StatsModal = ({
       {(isGameLost || isGameWon) && (
         <>
           <div className="min-h-[80px]">
-            {!!solutionMeaning && (
-              <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
-                <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
-                <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
-                <a
-                  href={getKBBIUrl(solution)}
-                  rel="noreferrer"
-                  target="_blank"
-                  className="text-sm text-blue-500 dark:text-sky-500 outline-none hover:underline hover:underline-offset-4"
-                >
-                  Lihat di KBBI
-                </a>
-              </div>
-            )}
+            <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
+              <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
+              {!!solutionMeaning && (
+                <>
+                  <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
+                  <a
+                    href={getKBBIUrl(solution)}
+                    rel="noreferrer"
+                    target="_blank"
+                    className="text-sm text-blue-500 dark:text-sky-500 outline-none hover:underline hover:underline-offset-4"
+                  >
+                    Lihat di KBBI
+                  </a>
+                </>
+              )}
+            </div>
           </div>
           <div className="mt-5 sm:mt-6 flex dark:text-white">
             <div className="w-1/2 mx-auto">

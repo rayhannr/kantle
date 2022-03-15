@@ -1,6 +1,6 @@
-import { getStatuses } from "../../lib/statuses";
+import { CharStatus, getStatuses } from "../../lib/statuses";
 import { Key } from "./Key";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ENTER_TEXT } from "../../constants/strings";
 import { localeAwareUpperCase } from "../../lib/words";
 import { useSolution } from "../../context/SolutionContext";
@@ -15,7 +15,7 @@ type Props = {
 
 export const Keyboard = ({ onChar, onDelete, onEnter, guesses, isRevealing }: Props) => {
   const { solution } = useSolution();
-  const charStatuses = getStatuses(guesses, solution);
+  const [charStatuses, setCharStatuses] = useState<{ [key: string]: CharStatus }>({});
 
   const onClick = (value: string) => {
     if (value === "ENTER") {
@@ -26,6 +26,10 @@ export const Keyboard = ({ onChar, onDelete, onEnter, guesses, isRevealing }: Pr
       onChar(value);
     }
   };
+
+  useEffect(() => {
+    setCharStatuses(getStatuses(guesses, solution));
+  }, [guesses, solution]);
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
