@@ -96,6 +96,24 @@ const getEmojiTiles = (isDarkMode: boolean, isHighContrastMode: boolean) => {
   return tiles;
 };
 
+export const addRoundRectToCanvasContext = () => {
+  if (!isInClient()) return;
+  Object.defineProperty(CanvasRenderingContext2D.prototype, "roundRect", {
+    value: function (x: number, y: number, width: number, height: number, radius: number) {
+      if (width < 2 * radius) radius = width / 2;
+      if (height < 2 * radius) radius = height / 2;
+      this.beginPath();
+      this.moveTo(x + radius, y);
+      this.arcTo(x + width, y, x + width, y + height, radius);
+      this.arcTo(x + width, y + height, x, y + height, radius);
+      this.arcTo(x, y + height, x, y, radius);
+      this.arcTo(x, y, x + width, y, radius);
+      this.closePath();
+      return this;
+    },
+  });
+};
+
 export const shareImage = async ({ isWithAnswer = false, ...params }: ShareProps & { isWithAnswer?: boolean }) => {
   if (!isInClient()) return;
 
@@ -138,9 +156,11 @@ export const shareImage = async ({ isWithAnswer = false, ...params }: ShareProps
       const marginY = gap * y;
       const rectX = paddingX + x * size + marginX;
       const rectY = paddingT + y * size + marginY;
+      const radius = 10;
 
       ctx.beginPath();
-      ctx.rect(rectX, rectY, size, size);
+      // @ts-ignore
+      ctx.roundRect(rectX, rectY, size, size, radius);
       ctx.fill();
 
       if (!isWithAnswer) return;

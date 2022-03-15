@@ -20,8 +20,6 @@ const getConditionalClassOnMount = (isMounted: boolean) => {
 };
 
 export const BaseModal = ({ title, children, handleClose, isMounted }: Props) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
   const [overlayClassName, setOverlayClassName] = useState<string>(OVERLAY_INITIAL_CLASS);
   const [contentClassName, setContentClassName] = useState<string>(CONTENT_INITIAL_CLASS);
 
@@ -29,12 +27,6 @@ export const BaseModal = ({ title, children, handleClose, isMounted }: Props) =>
     setOverlayClassName(isMounted ? "opacity-100" : OVERLAY_INITIAL_CLASS);
     setContentClassName(isMounted ? "opacity-100 translate-y-0 sm:scale-100" : CONTENT_INITIAL_CLASS);
   }, [isMounted]);
-
-  useEffect(() => {
-    if (!contentRef.current) return;
-    contentRef.current.classList.remove(...CONTENT_INITIAL_CLASS.split(" "));
-    contentRef.current.classList.add("opacity-100", "translate-y-0", "sm:scale-100");
-  }, [contentRef.current]);
 
   return (
     <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" open onClose={handleClose}>
@@ -45,7 +37,6 @@ export const BaseModal = ({ title, children, handleClose, isMounted }: Props) =>
             overlayClassName,
             getConditionalClassOnMount(isMounted)
           )}
-          ref={overlayRef}
         />
 
         {/* This element is to trick the browser into centering the modal contents. */}
@@ -58,7 +49,6 @@ export const BaseModal = ({ title, children, handleClose, isMounted }: Props) =>
             contentClassName,
             getConditionalClassOnMount(isMounted)
           )}
-          ref={contentRef}
         >
           <div className="absolute right-4 top-4">
             <XIcon

@@ -67,7 +67,7 @@ svg.cursor-pointer:hover {
 }
 
 .dance {
-  animation: dance 250ms ease-in-out;
+  animation: dance 200ms ease-in-out;
 }
 
 .navbar {

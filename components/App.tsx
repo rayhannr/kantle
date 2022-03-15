@@ -50,6 +50,7 @@ import Head from "next/head";
 import { useSolution } from "../context/SolutionContext";
 import { useExtendedTheme } from "../lib/theme";
 import { useDelayUnmount } from "../lib/animation";
+import { addRoundRectToCanvasContext } from "../lib/share";
 
 function App() {
   const { solution, solutionIndex } = useSolution();
@@ -233,6 +234,10 @@ function App() {
       }, GAME_LOST_INFO_DELAY);
     }
   }, [isGameWon, isGameLost, isRevealing, showSuccessAlert]);
+
+  useEffect(() => {
+    addRoundRectToCanvasContext();
+  }, []);
 
   return (
     <div className="flex flex-col md:h-screen">
