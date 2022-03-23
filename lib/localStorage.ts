@@ -29,11 +29,8 @@ export const removeFromStorage = (key: string) => {
 };
 
 export const clearLocalStorage = () => {
-  removeFromStorage(GAME_STATE_KEY);
-  removeFromStorage(GAME_STAT_KEY);
-  removeFromStorage(HIGH_CONSTRAST_KEY);
-  removeFromStorage(THEME_KEY);
-  removeFromStorage(GAME_MODE_KEY);
+  if (!isInClient()) return;
+  localStorage.clear();
 };
 
 type StoredGameState = {

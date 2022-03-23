@@ -70,11 +70,11 @@ const StatsModal = ({
   const [isWithAnswer, setIsWithAnswer] = useState<boolean>(false);
 
   const shouldFetch = (isGameLost || isGameWon) && !getFromStorage(SOLUTION_MEANING_KEY);
-  const { data } = useSWR(shouldFetch ? `/api/define/${solution}` : null, fetcher);
-  const solutionMeaning = data?.arti[0] || getFromStorage(SOLUTION_MEANING_KEY);
+  const { data, error } = useSWR(shouldFetch ? `/api/define/${solution}` : null, fetcher);
+  const solutionMeaning = data?.arti ? data?.arti[0] : getFromStorage(SOLUTION_MEANING_KEY);
 
   useEffect(() => {
-    if (!data || solutionMeaning === getFromStorage(SOLUTION_MEANING_KEY)) return;
+    if (!data) return;
 
     setToStorage(SOLUTION_MEANING_KEY, solutionMeaning);
   }, [data, solutionMeaning]);
@@ -112,6 +112,8 @@ const StatsModal = ({
           <div className="min-h-[80px]">
             <div className="text-slate-900 dark:text-white text-left ml-2 mt-4">
               <p className="font-semibold text-sm mb-1">Kata hari ini : {capitalize(solution)}</p>
+              {!data && !solutionMeaning && !error && <p className="text-xs mb-1">Memuat arti kata...</p>}
+              {!!error && <p className="text-xs mb-1">Gagal memuat arti kata</p>}
               {!!solutionMeaning && (
                 <>
                   <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
