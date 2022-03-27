@@ -106,7 +106,7 @@ const StatsModal = ({
       <h4 className="mt-3 text-lg leading-6 font-semibold text-slate-900 dark:text-gray-100">
         {GUESS_DISTRIBUTION_TEXT}
       </h4>
-      <Histogram gameStats={gameStats} />
+      <Histogram {...{ gameStats, guesses, isGameWon }} />
       {(isGameLost || isGameWon) && (
         <>
           <div className="min-h-[80px]">
