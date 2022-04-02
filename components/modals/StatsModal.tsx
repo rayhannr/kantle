@@ -1,4 +1,3 @@
-import Countdown from "react-countdown";
 import { StatBar } from "../stats/StatBar";
 import { Histogram } from "../stats/Histogram";
 import { GameStats, getFromStorage, setToStorage } from "../../lib/localStorage";
@@ -24,6 +23,8 @@ import useSWR from "swr";
 import { fetcher } from "../../lib/fetcher";
 import { useExtendedTheme } from "../../lib/theme";
 import { ShareIcon, PhotographIcon } from "../Icons";
+import Countdown from "../Countdown";
+import { useRemainingTime } from "../../lib/time";
 
 type Props = {
   handleClose: () => void;
@@ -66,6 +67,7 @@ const StatsModal = ({
   isMounted,
 }: Props) => {
   const { solution, solutionIndex, tomorrow } = useSolution();
+  const remainingTime = useRemainingTime();
   const { isDarkMode } = useExtendedTheme();
   const [isWithAnswer, setIsWithAnswer] = useState<boolean>(false);
 
@@ -143,11 +145,7 @@ const StatsModal = ({
           <div className="mt-5 sm:mt-6 flex dark:text-white">
             <div className="w-1/2 mx-auto">
               <h5>{NEW_WORD_TEXT}</h5>
-              <Countdown
-                className="text-lg font-medium text-slate-900 dark:text-gray-100"
-                date={tomorrow}
-                daysInHours={true}
-              />
+              <Countdown time={remainingTime} />
             </div>
             <div className="w-1/2 flex flex-col">
               <Button onClick={() => shareStatus({ ...shareParams, handleShareToClipboard })} className="mt-2">
