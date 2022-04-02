@@ -3,7 +3,6 @@ import { VALID_GUESSES } from "../constants/validGuesses";
 import { WRONG_SPOT_MESSAGE, NOT_CONTAINED_MESSAGE, SOLUTION_PASSPHRASE } from "../constants/strings";
 import { getGuessStatuses } from "./statuses";
 import { default as GraphemeSplitter } from "grapheme-splitter";
-import CryptoJS from "crypto-js";
 
 const WORDS_SET = new Set(WORDS);
 const VALID_GUESSES_SET = new Set(VALID_GUESSES);
@@ -75,14 +74,22 @@ export const localeAwareUpperCase = (text: string) => {
     : text.toUpperCase();
 };
 
-export const encryptWithAES = (text: string) => {
-  return CryptoJS.AES.encrypt(text, SOLUTION_PASSPHRASE).toString();
+export const encrypt = (text: string) => {
+  const textToChars = (text: string) => text.split("").map((c) => c.charCodeAt(0));
+  const byteHex = (n: number) => ("0" + Number(n).toString(16)).substr(-2);
+  const applyKeyToChar = (code: any) => textToChars(SOLUTION_PASSPHRASE).reduce((a, b) => a ^ b, code);
+
+  return text.split("").map(textToChars).map(applyKeyToChar).map(byteHex).join("");
 };
 
-export const decryptWithAES = (ciphertext: string) => {
-  const bytes = CryptoJS.AES.decrypt(ciphertext, SOLUTION_PASSPHRASE);
-  const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  return originalText;
+export const decrypt = (encoded: string) => {
+  const textToChars = (text: string) => text.split("").map((c) => c.charCodeAt(0));
+  const applyKeyToChar = (code: any) => textToChars(SOLUTION_PASSPHRASE).reduce((a, b) => a ^ b, code);
+  return (encoded.match(/.{1,2}/g) || [])
+    .map((hex) => parseInt(hex, 16))
+    .map(applyKeyToChar)
+    .map((charCode) => String.fromCharCode(charCode))
+    .join("");
 };
 
 export const capitalize = (name: string) => name.slice(0, 1).toUpperCase() + name.substring(1).toLowerCase();

@@ -24,14 +24,7 @@ import {
   DANCE_TIME_MS,
   MODAL_EXIT_DURATION,
 } from "../constants/settings";
-import {
-  isWordInWordList,
-  isWinningWord,
-  findFirstUnusedReveal,
-  unicodeLength,
-  encryptWithAES,
-  decryptWithAES,
-} from "../lib/words";
+import { isWordInWordList, isWinningWord, findFirstUnusedReveal, unicodeLength, encrypt, decrypt } from "../lib/words";
 import { addStatsForCompletedGame, loadStats } from "../lib/stats";
 import {
   loadGameStateFromLocalStorage,
@@ -75,7 +68,7 @@ function App() {
   const [isDancing, setIsDancing] = useState(false);
   const [guesses, setGuesses] = useState<string[]>(() => {
     const loaded = loadGameStateFromLocalStorage();
-    const decryptedSolution = decryptWithAES(loaded?.solution || "");
+    const decryptedSolution = decrypt(loaded?.solution || "");
     if (decryptedSolution !== solution) {
       removeFromStorage(SOLUTION_MEANING_KEY);
       return [];
@@ -205,7 +198,7 @@ function App() {
   }, [isHighContrastMode]);
 
   useEffect(() => {
-    saveGameStateToLocalStorage({ guesses, solution: encryptWithAES(solution) });
+    saveGameStateToLocalStorage({ guesses, solution: encrypt(solution) });
   }, [guesses, solution]);
 
   useEffect(() => {
