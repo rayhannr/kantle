@@ -1,11 +1,5 @@
-/*
- * Copyright (c) 2021-2022 AccelByte Inc. All Rights Reserved.
- * This is licensed software from AccelByte Inc, for limitations
- * and restrictions contact your company contract manager.
- */
-
-import { CheckIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
+import { CheckIcon } from "./Icons";
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value"> {
   label?: string;

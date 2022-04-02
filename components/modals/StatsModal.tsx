@@ -15,7 +15,6 @@ import {
   IMAGE_CHECKBOX_TEXT,
   SOLUTION_MEANING_KEY,
 } from "../../constants/strings";
-import { ShareIcon, PhotographIcon } from "@heroicons/react/outline";
 import { useSolution } from "../../context/SolutionContext";
 import { getKBBIUrl } from "../../lib/stats";
 import Button from "../Button";
@@ -24,6 +23,7 @@ import { Checkbox } from "../Checkbox";
 import useSWR from "swr";
 import { fetcher } from "../../lib/fetcher";
 import { useExtendedTheme } from "../../lib/theme";
+import { ShareIcon, PhotographIcon } from "../Icons";
 
 type Props = {
   handleClose: () => void;

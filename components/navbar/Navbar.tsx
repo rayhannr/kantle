@@ -1,4 +1,4 @@
-import { ChartBarIcon, CogIcon, InformationCircleIcon } from "@heroicons/react/outline";
+import { ChartBarIcon, CogIcon, InformationCircleIcon } from "../Icons";
 import { GAME_NAME } from "../../constants/strings";
 import { useSolution } from "../../context/SolutionContext";
 

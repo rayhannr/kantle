@@ -1,7 +1,6 @@
-import { Dialog } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { XIcon } from "../Icons";
 
 type Props = {
   title: string;
@@ -24,14 +23,23 @@ export const BaseModal = ({ title, children, handleClose, isMounted }: Props) =>
   const [contentClassName, setContentClassName] = useState<string>(CONTENT_INITIAL_CLASS);
 
   useEffect(() => {
-    setOverlayClassName(isMounted ? "opacity-100" : OVERLAY_INITIAL_CLASS);
-    setContentClassName(isMounted ? "opacity-100 translate-y-0 sm:scale-100" : CONTENT_INITIAL_CLASS);
+    const TRANSITION_TIMEOUT = isMounted ? 50 : 0;
+
+    const timeout = setTimeout(() => {
+      setOverlayClassName(isMounted ? "opacity-100" : OVERLAY_INITIAL_CLASS);
+      setContentClassName(isMounted ? "opacity-100 translate-y-0 sm:scale-100" : CONTENT_INITIAL_CLASS);
+    }, TRANSITION_TIMEOUT);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [isMounted]);
 
   return (
-    <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" open onClose={handleClose}>
+    <div className="fixed z-10 inset-0 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen py-10 px-4 text-center sm:block sm:p-0">
-        <Dialog.Overlay
+        <div
+          onClick={handleClose}
           className={classNames(
             "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity",
             overlayClassName,
@@ -51,22 +59,17 @@ export const BaseModal = ({ title, children, handleClose, isMounted }: Props) =>
           )}
         >
           <div className="absolute right-4 top-4">
-            <XIcon
-              className="h-5 w-5 cursor-pointer stroke-slate-900 dark:stroke-white"
-              onClick={() => handleClose()}
-            />
+            <XIcon className="h-5 w-5 cursor-pointer stroke-slate-900 dark:stroke-white" onClick={handleClose} />
           </div>
           <div>
             <div className="text-center">
-              <Dialog.Title as="h3" className="text-lg leading-6 font-semibold text-slate-900 dark:text-gray-100">
-                {title}
-              </Dialog.Title>
+              <h3 className="text-lg leading-6 font-semibold text-slate-900 dark:text-gray-100">{title}</h3>
               <div className="mt-2">{children}</div>
             </div>
           </div>
         </div>
         {/* </Transition.Child> */}
       </div>
-    </Dialog>
+    </div>
   );
 };
