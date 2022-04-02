@@ -69,14 +69,15 @@ const StatsModal = ({
   const { isDarkMode } = useExtendedTheme();
   const [isWithAnswer, setIsWithAnswer] = useState<boolean>(false);
 
-  const shouldFetch = (isGameLost || isGameWon) && !getFromStorage(SOLUTION_MEANING_KEY);
+  const storedMeaning = getFromStorage(SOLUTION_MEANING_KEY);
+  const shouldFetch = (isGameLost || isGameWon) && !storedMeaning;
   const { data, error } = useSWR(shouldFetch ? `/api/define/${solution}` : null, fetcher);
-  const solutionMeaning = data?.arti ? data?.arti[0] : getFromStorage(SOLUTION_MEANING_KEY);
+  const solutionMeaning = data?.arti ? data?.arti : storedMeaning ? JSON.parse(storedMeaning) : "";
 
   useEffect(() => {
     if (!data) return;
 
-    setToStorage(SOLUTION_MEANING_KEY, solutionMeaning);
+    setToStorage(SOLUTION_MEANING_KEY, JSON.stringify(solutionMeaning));
   }, [data, solutionMeaning]);
 
   const onChangeIsWithAnswer = () => {
@@ -116,7 +117,17 @@ const StatsModal = ({
               {!!error && <p className="text-xs mb-1">Gagal memuat arti kata</p>}
               {!!solutionMeaning && (
                 <>
-                  <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
+                  {Array.isArray(solutionMeaning) ? (
+                    <ul className="list-disc ml-4">
+                      {solutionMeaning.map((meaning) => (
+                        <li key={meaning} className="text-xs mb-1">
+                          {capitalize(meaning)}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-xs mb-1">{capitalize(solutionMeaning)}</p>
+                  )}
                   <a
                     href={getKBBIUrl(solution)}
                     rel="noreferrer"

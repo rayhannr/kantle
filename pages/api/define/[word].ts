@@ -1,6 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import KBBI from "kbbi.js";
 
+const PREFIXES = ["Isl", "Kim", "Kris"];
+
+const clearPrefix = (text: string) => {
+  let updatedText = text;
+  PREFIXES.forEach((prefix) => {
+    updatedText = updatedText.startsWith(prefix) ? updatedText.replace(prefix, "") : updatedText;
+  });
+  return updatedText;
+};
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.status(405).json({ message: "Method not allowed" });
@@ -10,9 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   KBBI.cari(req.query.word)
     .then((result: any) => {
       const updatedResult = { ...result };
-      updatedResult.arti = result.arti.map((meaning: string) => {
-        return meaning.startsWith("Isl") ? meaning.replace("Isl", "") : meaning;
-      });
+      updatedResult.arti = result.arti.map((meaning: string) => clearPrefix(meaning));
       res.status(200).json(updatedResult);
     })
     .catch(() => {
