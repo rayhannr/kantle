@@ -21,7 +21,8 @@ export const Key = ({ children, status, width = 40, value, onClick, isRevealing 
     "flex items-center justify-center h-10 md:h-12 rounded mx-0.5 text-xs md:text-sm lg:text-base font-bold cursor-pointer select-none dark:text-white",
     {
       "transition ease-in-out": isRevealing,
-      "bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 active:bg-slate-400 text-slate-900": !status,
+      "bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-700 active:bg-slate-400 text-slate-900":
+        !status,
       "bg-slate-400 hover:bg-slate-500 dark:bg-slate-800 dark:hover:bg-slate-500 text-white": status === "absent",
       "bg-orange-500 hover:bg-orange-400 active:bg-orange-600 text-white": status === "correct" && isHighContrast,
       "bg-sky-500 hover:bg-sky-400 active:bg-sky-600 text-white": status === "present" && isHighContrast,

@@ -1,7 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import KBBI from "kbbi.js";
 
-const PREFIXES = ["Isl", "Kim", "Kris"];
+const PREFIXES = [
+  "Isl",
+  "Kim",
+  "Kris",
+  " Jk ",
+  " Plb ",
+  "dv cakJw ",
+  "Dok",
+  " cak ",
+  "Graf",
+  "Kat",
+  "Anat",
+  " akr ",
+  "Sen",
+  "Fis",
+  "Olr",
+  " ki ",
+  "Kom",
+];
 
 const clearPrefix = (text: string) => {
   let updatedText = text;

@@ -2,7 +2,6 @@ import { WORDS } from "../constants/wordlist";
 import { VALID_GUESSES } from "../constants/validGuesses";
 import { WRONG_SPOT_MESSAGE, NOT_CONTAINED_MESSAGE, SOLUTION_PASSPHRASE } from "../constants/strings";
 import { getGuessStatuses } from "./statuses";
-import { default as GraphemeSplitter } from "grapheme-splitter";
 
 const WORDS_SET = new Set(WORDS);
 const VALID_GUESSES_SET = new Set(VALID_GUESSES);
@@ -55,7 +54,7 @@ export const findFirstUnusedReveal = (word: string, guesses: string[], solution:
 };
 
 export const unicodeSplit = (word: string) => {
-  return new GraphemeSplitter().splitGraphemes(word);
+  return word.split("");
 };
 
 export const unicodeLength = (word: string) => {

@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Grid } from "./grid/Grid";
 import { Keyboard } from "./keyboard/Keyboard";
-const InfoModal = dynamic(() => import("./modals/InfoModal"));
-const StatsModal = dynamic(() => import("./modals/StatsModal"));
-const SettingsModal = dynamic(() => import("./modals/SettingsModal"));
+import InfoModal from "./modals/InfoModal";
+import StatsModal from "./modals/StatsModal";
+import SettingsModal from "./modals/SettingsModal";
 import {
   WIN_MESSAGES,
   GAME_COPIED_MESSAGE,
@@ -35,8 +35,6 @@ import {
   setToStorage,
   removeFromStorage,
 } from "../lib/localStorage";
-import { default as GraphemeSplitter } from "grapheme-splitter";
-
 import { AlertContainer } from "../components/alerts/AlertContainer";
 import { useAlert } from "../context/AlertContext";
 import { Navbar } from "../components/navbar/Navbar";
@@ -117,7 +115,7 @@ function App() {
   };
 
   const onDelete = () => {
-    setCurrentGuess(new GraphemeSplitter().splitGraphemes(currentGuess).slice(0, -1).join(""));
+    setCurrentGuess((prev) => prev.slice(0, -1));
   };
 
   const onEnter = () => {
